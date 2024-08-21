@@ -1,0 +1,23 @@
+services:
+  node_exporter:
+    image: prom/node-exporter
+    container_name: node_exporter-1
+    command:
+      - '--path.rootfs=/host'
+    # network_mode: host
+    pid: host
+    restart: unless-stopped
+    ports:
+      - '9100:9100'
+    volumes:
+      - './data-node_exporter:/host:ro,rslave'
+  
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus-1
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./data-prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    depends_on:
+      - node_exporter
